@@ -12,6 +12,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -22,5 +23,61 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Responsive Improvements */
+.container {
+  @apply px-4 md:px-8;
+}
+
+/* Mobile friendly tables */
+table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+th, td {
+  padding: 12px 8px;
+  font-size: 14px;
+}
+
+/* Card grid responsive */
+.grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Sidebar mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* Improve buttons on mobile */
+button {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+/* Loading spinner */
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
