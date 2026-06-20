@@ -42,17 +42,16 @@ export default function WorkflowInstanceDetail() {
     }
   };
 
-  const fetchTasks = async () => {
-    try {
-      const res = await api.get(`/approval-tasks/?workflow_instance=${id}`);
-      setTasks(res.data);
-    } catch (error) {
-      console.error("Lỗi tải tasks:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+const fetchTasks = async () => {
+  try {
+    const res = await api.get(`/approval-tasks/?workflow_instance=${id}`);
+    setTasks(res.data);
+  } catch (error) {
+    console.error("Lỗi tải tasks:", error);
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => {
     fetchInstance();
     fetchTasks();
@@ -166,60 +165,60 @@ export default function WorkflowInstanceDetail() {
           </div>
         )}
 
-        {/* Timeline with Real Tasks */}
-        <div>
-          <h3 className="font-semibold mb-6 text-lg">Tiến trình phê duyệt</h3>
-          <div className="space-y-8">
-            {tasks.length > 0 ? (
-              Array.from(new Map(tasks.map(item => [item.step_number, item])).values())
-                .sort((a, b) => a.step_number - b.step_number)
-                .map((task) => (
-                  <div key={task.id} className="flex gap-6 border-l-4 border-gray-200 pl-6">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 border-2 ${
-                      task.status === 'approved' ? 'bg-green-500 border-green-500 text-white' :
-                      task.status === 'rejected' ? 'bg-red-500 border-red-500 text-white' : 'border-gray-300'
-                    }`}>
-                      {task.status === 'approved' ? <CheckCircle size={22} /> :
-                       task.status === 'rejected' ? <ThumbsDown size={22} /> : task.step_number}
-                    </div>
-                    <div className="pt-1 flex-1">
-                      <p className="font-medium">Bước {task.step_number}: Phê duyệt</p>
-                      <p className="text-sm text-gray-500">Người phê duyệt: {task.assigned_to}</p>
-                      {task.comment && <p className="text-sm text-gray-600 mt-1">{task.comment}</p>}
-                      <p className="text-xs text-gray-400 mt-1">
-                        {task.status === 'approved' ? 'Hoàn thành' :
-                         task.status === 'rejected' ? 'Từ chối' : 'Chờ phê duyệt'}
-                      </p>
-                    </div>
-                    {task.status === 'pending' && (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleApprove(task.id)}
-                          className="px-4 py-2 bg-green-600 text-white text-sm rounded-xl hover:bg-green-700"
-                        >
-                          <ThumbsUp size={16} className="inline" /> Duyệt
-                        </button>
-                        <button
-                          onClick={() => handleReject(task.id)}
-                          className="px-4 py-2 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700"
-                        >
-                          <ThumbsDown size={16} className="inline" /> Từ chối
-                        </button>
-                        <button
-                          onClick={() => handleBranch(task.id, task.step_number + 1)}
-                          className="px-4 py-2 bg-purple-600 text-white text-sm rounded-xl hover:bg-purple-700"
-                        >
-                          Rẽ nhánh
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))
-            ) : (
-              <div className="text-gray-500">Chưa có nhiệm vụ phê duyệt.</div>
+       {/* Timeline with Real Tasks */}
+<div>
+  <h3 className="font-semibold mb-6 text-lg">Tiến trình phê duyệt</h3>
+  <div className="space-y-8">
+    {tasks.length > 0 ? (
+      Array.from(new Map(tasks.map(item => [item.step_number, item])).values())
+        .sort((a, b) => a.step_number - b.step_number)
+        .map((task) => (
+          <div key={task.id} className="flex gap-6 border-l-4 border-gray-200 pl-6">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 border-2 ${
+              task.status === 'approved' ? 'bg-green-500 border-green-500 text-white' :
+              task.status === 'rejected' ? 'bg-red-500 border-red-500 text-white' : 'border-gray-300'
+            }`}>
+              {task.status === 'approved' ? <CheckCircle size={22} /> :
+               task.status === 'rejected' ? <ThumbsDown size={22} /> : task.step_number}
+            </div>
+            <div className="pt-1 flex-1">
+              <p className="font-medium">Bước {task.step_number}: Phê duyệt</p>
+              <p className="text-sm text-gray-500">Người phê duyệt: {task.assigned_to}</p>
+              {task.comment && <p className="text-sm text-gray-600 mt-1">{task.comment}</p>}
+              <p className="text-xs text-gray-400 mt-1">
+                {task.status === 'approved' ? 'Hoàn thành' :
+                 task.status === 'rejected' ? 'Từ chối' : 'Chờ phê duyệt'}
+              </p>
+            </div>
+            {task.status === 'pending' && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleApprove(task.id)}
+                  className="px-4 py-2 bg-green-600 text-white text-sm rounded-xl hover:bg-green-700"
+                >
+                  <ThumbsUp size={16} className="inline" /> Duyệt
+                </button>
+                <button
+                  onClick={() => handleReject(task.id)}
+                  className="px-4 py-2 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700"
+                >
+                  <ThumbsDown size={16} className="inline" /> Từ chối
+                </button>
+                <button
+                  onClick={() => handleBranch(task.id, task.step_number + 1)}
+                  className="px-4 py-2 bg-purple-600 text-white text-sm rounded-xl hover:bg-purple-700"
+                >
+                  Rẽ nhánh
+                </button>
+              </div>
             )}
           </div>
-        </div>
+        ))
+    ) : (
+      <div className="text-gray-500">Chưa có nhiệm vụ phê duyệt.</div>
+    )}
+  </div>
+</div>
 
         {/* Action Buttons */}
         <div className="mt-12 flex gap-4">

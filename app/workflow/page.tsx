@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { motion } from 'framer-motion';
 import api from '../../lib/api';
 import { Plus, Play, Search } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface WorkflowTemplate {
   id: string;
@@ -63,11 +64,21 @@ export default function WorkflowPage() {
   const filteredWorkflows = workflows.filter(wf => {
     const matchesSearch = wf.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          wf.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || 
+    const matchesStatus = statusFilter === 'all' ||
                          (statusFilter === 'active' && wf.is_active) ||
                          (statusFilter === 'inactive' && !wf.is_active);
     return matchesSearch && matchesStatus;
   });
+
+ const handleRun = async (templateId: string) => {
+  try {
+    const res = await api.post('/instances/', { template: templateId });
+    toast.success("✅ Đã chạy quy trình!");
+    router.push(`/workflow/${res.data.id}`); // res.data.id là Instance ID
+  } catch (error) {
+    toast.error("❌ Lỗi chạy quy trình");
+  }
+};
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -90,10 +101,10 @@ export default function WorkflowPage() {
                 description: description || '',
                 is_active: true
               });
-              alert("✅ Tạo quy trình thành công!");
+              toast.success("✅ Tạo quy trình thành công!");
               fetchWorkflows(); // Tải lại danh sách
             } catch (error) {
-              alert("❌ Lỗi khi tạo. Kiểm tra console.");
+              toast.error("❌ Lỗi khi tạo. Kiểm tra console.");
               console.error(error);
             }
           }}
@@ -132,8 +143,8 @@ export default function WorkflowPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredWorkflows.length > 0 ? (
             filteredWorkflows.map((wf, index) => (
-              <motion.div 
-                key={wf.id} 
+              <motion.div
+                key={wf.id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -147,7 +158,10 @@ export default function WorkflowPage() {
                 </div>
                 <p className="text-gray-600 mt-3 line-clamp-2">{wf.description}</p>
                 <div className="mt-6 flex gap-3">
-                  <button className="flex-1 bg-blue-600 text-white py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-700">
+                  <button 
+                    onClick={() => handleRun(wf.id)}
+                    className="flex-1 bg-blue-600 text-white py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-700"
+                  >
                     <Play size={18} />
                     Chạy
                   </button>
