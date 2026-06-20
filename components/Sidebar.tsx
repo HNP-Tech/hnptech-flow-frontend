@@ -31,14 +31,14 @@ export default function Sidebar() {
     <>
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-xl shadow dark:bg-gray-800"
+        className="md:hidden fixed top-4 left-4 z-[60] p-3 bg-white rounded-2xl shadow-lg dark:bg-gray-800"
         onClick={() => setIsMobileOpen(!isMobileOpen)}
       >
         {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
       {/* Sidebar */}
-      <div className={`w-72 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 flex flex-col z-40 transition-transform duration-300 md:translate-x-0 ${
+      <div className={`w-72 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 flex flex-col z-50 transition-transform duration-300 md:translate-x-0 ${
         isMobileOpen ? 'translate-x-0' : '-translate-x-full'
       } dark:bg-gray-900 dark:border-gray-700`}>
         {/* Logo */}
