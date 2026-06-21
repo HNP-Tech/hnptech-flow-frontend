@@ -6,6 +6,7 @@ import api from '../../../lib/api';
 import { ArrowLeft, CheckCircle, User, Calendar, AlertCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+
 interface WorkflowInstance {
   id: string;
   template: string;
@@ -185,26 +186,37 @@ const fetchTasks = async () => {
           </div>
         </div>
 
-        {/* AI Suggestion */}
-        {instance.ai_suggestion && (
-          <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-2xl">
-            <div className="flex items-center gap-2 text-yellow-700">
-              <AlertCircle size={20} />
-              <span className="font-medium">AI Gợi ý</span>
-            </div>
-            <p className="text-sm text-yellow-600 mt-2">{instance.ai_suggestion.reason}</p>
-          </div>
-        )}
+{/* AI Suggestion */}
+{instance.ai_suggestion && (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-2xl"
+  >
+    <div className="flex items-center gap-2 text-yellow-700">
+      <AlertCircle size={20} />
+      <span className="font-medium">AI Gợi ý</span>
+    </div>
+    <p className="text-sm text-yellow-600 mt-2">{instance.ai_suggestion.reason}</p>
+  </motion.div>
+)}
 
-       {/* Timeline with Real Tasks */}
+{/* Timeline with Real Tasks */}
 <div>
   <h3 className="font-semibold mb-6 text-lg">Tiến trình phê duyệt</h3>
   <div className="space-y-8">
     {tasks.length > 0 ? (
       Array.from(new Map(tasks.map(item => [item.step_number, item])).values())
         .sort((a, b) => a.step_number - b.step_number)
-        .map((task) => (
-          <div key={task.id} className="flex gap-6 border-l-4 border-gray-200 pl-6">
+        .map((task, index) => (
+          <motion.div
+            key={task.id}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+            className="flex gap-6 border-l-4 border-gray-200 pl-6"
+          >
             <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 border-2 ${
               task.status === 'approved' ? 'bg-green-500 border-green-500 text-white' :
               task.status === 'rejected' ? 'bg-red-500 border-red-500 text-white' : 'border-gray-300'
@@ -243,7 +255,7 @@ const fetchTasks = async () => {
                 </button>
               </div>
             )}
-          </div>
+          </motion.div>
         ))
     ) : (
       <div className="text-gray-500">Chưa có nhiệm vụ phê duyệt.</div>
