@@ -62,7 +62,17 @@ const fetchTasks = async () => {
       await api.patch(`/approval-tasks/${taskId}/`, { status: 'approved' });
       fetchTasks();
       fetchInstance();
-      toast.success("✅ Phê duyệt thành công!");
+      toast.success("✅ Phê duyệt thành công!", {
+       duration: 4000,
+       position: 'top-center',
+       style: {
+         background: '#10b981',
+         color: '#ffffff',
+         borderRadius: '16px',
+         padding: '16px 24px',
+         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        },
+      });
     } catch (error) {
       toast.error("❌ Lỗi phê duyệt");
     }
@@ -77,7 +87,17 @@ const fetchTasks = async () => {
       });
       fetchTasks();
       fetchInstance();
-      toast.success("✅ Đã từ chối!");
+      toast.success("✅ Đã từ chối!", {
+       duration: 4000,
+       position: 'top-center',
+       style: {
+         background: '#b9102c',
+         color: '#ffffff',
+         borderRadius: '16px',
+         padding: '16px 24px',
+         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        },
+      });
     } catch (error) {
       toast.error("❌ Lỗi từ chối");
     }
