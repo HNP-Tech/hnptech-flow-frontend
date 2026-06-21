@@ -91,7 +91,7 @@ const fetchTasks = async () => {
        duration: 4000,
        position: 'top-center',
        style: {
-         background: '#b9102c',
+         background: '#FF4D4F',
          color: '#ffffff',
          borderRadius: '16px',
          padding: '16px 24px',
@@ -111,7 +111,18 @@ const fetchTasks = async () => {
     if (confirm("Bạn chắc chắn muốn hủy quy trình?")) {
       try {
         await api.patch(`/instances/${id}/`, { status: 'cancelled' });
-        toast.success("✅ Đã hủy quy trình!");
+        toast.success("✅ Đã hủy quy trình!", {
+         duration: 4000,
+         position: 'top-center',
+         style: {
+           background: '#D32F2F',
+           color: '#ffffff',
+           borderRadius: '16px',
+           padding: '16px 24px',
+           boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+         },
+       });
+
         router.push('/workflow');
       } catch (error) {
         toast.error("❌ Lỗi hủy quy trình");
