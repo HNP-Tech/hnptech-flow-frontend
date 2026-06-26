@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import api from '../../lib/api';
 import { Plus, Play, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useNotifications } from '../../hooks/useNotifications';
 
 interface WorkflowTemplate {
   id: string;
@@ -17,37 +18,31 @@ interface WorkflowTemplate {
 
 export default function WorkflowPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
-
-  // Protected Route
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, router]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { notifications } = useNotifications();   // Dùng hook
 
   const [workflows, setWorkflows] = useState<WorkflowTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
+  // Protected Route
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+    fetchWorkflows();
+  }, [isAuthenticated, authLoading, router]);
+
   const fetchWorkflows = async () => {
     try {
       setLoading(true);
-      console.log("🔄 Đang gọi API từ frontend...");
       const res = await api.get('/templates/');
-      console.log("✅ Nhận được dữ liệu:", res.data);
       setWorkflows(res.data);
     } catch (error: any) {
-      console.error("❌ Lỗi kết nối API:", error.message);
-      if (error.response) {
-        console.error("Response:", error.response.data);
-      }
-      // Demo data khi lỗi
+      console.error("❌ Lỗi kết nối API:", error);
       setWorkflows([
         { id: "1", name: "Nghỉ phép nhân viên", description: "Quy trình xin nghỉ phép", is_active: true },
         { id: "2", name: "Phê duyệt chi phí", description: "Duyệt đề nghị chi phí", is_active: true },
@@ -56,10 +51,6 @@ export default function WorkflowPage() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchWorkflows();
-  }, []);
 
   const filteredWorkflows = workflows.filter(wf => {
     const matchesSearch = wf.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -70,42 +61,58 @@ export default function WorkflowPage() {
     return matchesSearch && matchesStatus;
   });
 
- const handleRun = async (templateId: string) => {
-  try {
-    const res = await api.post('/instances/', { template: templateId });
-    toast.success("✅ Đã chạy quy trình!");
-    router.push(`/workflow/${res.data.id}`); // res.data.id là Instance ID
-  } catch (error) {
-    toast.error("❌ Lỗi chạy quy trình");
+  const handleRun = async (templateId: string) => {
+    try {
+      const res = await api.post('/instances/', { template: templateId });
+      toast.success("✅ Đã chạy quy trình!");
+      router.push(`/workflow/${res.data.id}`);
+    } catch (error) {
+      toast.error("❌ Lỗi chạy quy trình");
+    }
+  };
+
+  if (authLoading) {
+    return <div className="text-center py-12">Đang kiểm tra quyền truy cập...</div>;
   }
-};
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-8xl mx-auto">
+      {/* Realtime Notifications */}
+      {notifications.length > 0 && (
+        <div className="mb-6 space-y-2">
+          {notifications.map((noti, index) => (
+            <div key={index} className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-xl flex gap-3">
+              <span>🛎️</span>
+              <div>
+                <p className="font-medium">{noti.message}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Quy Trình Phê Duyệt</h1>
           <p className="text-gray-600 mt-1">Quản lý tất cả quy trình trong hệ thống</p>
         </div>
-     
+
         <button
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl transition"
           onClick={async () => {
             const name = prompt("Nhập tên quy trình mới:");
             const description = prompt("Nhập mô tả quy trình (tùy chọn):");
-           
             if (!name) return;
             try {
-              await api.post('/templates/', {
-                name,
-                description: description || '',
-                is_active: true
-              });
+              await api.post('/templates/', { name, description: description || '', is_active: true });
               toast.success("✅ Tạo quy trình thành công!");
-              fetchWorkflows(); // Tải lại danh sách
+              fetchWorkflows();
             } catch (error) {
-              toast.error("❌ Lỗi khi tạo. Kiểm tra console.");
-              console.error(error);
+              toast.error("❌ Lỗi khi tạo.");
             }
           }}
         >
@@ -158,7 +165,7 @@ export default function WorkflowPage() {
                 </div>
                 <p className="text-gray-600 mt-3 line-clamp-2">{wf.description}</p>
                 <div className="mt-6 flex gap-3">
-                  <button 
+                  <button
                     onClick={() => handleRun(wf.id)}
                     className="flex-1 bg-blue-600 text-white py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-700"
                   >

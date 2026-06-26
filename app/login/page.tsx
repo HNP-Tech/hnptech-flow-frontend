@@ -5,6 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
 import { LogIn } from 'lucide-react';
+import toast from 'react-hot-toast';
+
+interface User {
+  id: number;
+  username: string;
+  full_name: string;
+  role: string;
+}
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -13,39 +21,38 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const res = await api.post('/token/', {
-        username,
-        password
-      });
+  try {
+    const loginData = {
+      username: username,   // hoặc email tùy backend
+      password: password,
+    };
 
-      localStorage.setItem('access_token', res.data.access);
-      localStorage.setItem('refresh_token', res.data.refresh);
+    // Gọi API Login thật sự
+    const res = await api.post('/token/', loginData);   // hoặc '/api/token/' tùy backend
 
-      api.defaults.headers.common['Authorization'] = `Bearer ${res.data.access}`;
+    // Lưu token
+    localStorage.setItem('access_token', res.data.access);
+    localStorage.setItem('refresh_token', res.data.refresh);
+    api.defaults.headers.common['Authorization'] = `Bearer ${res.data.access}`;
 
-      // Lưu user vào context
-      const userData = {
-        id: 1,
-        username: username,
-        full_name: username,
-        role: 'Quản trị viên'
-      };
+    // Lấy thông tin user
+    const userRes = await api.get('/user/me/');
+    login(userRes.data);
 
-      login(userData);
+    toast.success("Đăng nhập thành công!");
+    router.push('/workflow');   // hoặc trang dashboard
 
-      alert("Đăng nhập thành công!");
-    } catch (error) {
-      alert("Sai tài khoản hoặc mật khẩu");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error: any) {
+    console.error(error);
+    toast.error(error.response?.data?.detail || "Sai tài khoản hoặc mật khẩu");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-emerald-50 flex items-center justify-center">
@@ -57,7 +64,6 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold mt-6">HNP Tech Flow</h1>
           <p className="text-gray-600 mt-2">Đăng nhập để tiếp tục</p>
         </div>
-
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Tên đăng nhập</label>

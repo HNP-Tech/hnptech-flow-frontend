@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { ArrowLeft, CheckCircle, User, Calendar, AlertCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 
 interface WorkflowInstance {
@@ -201,6 +202,7 @@ const fetchTasks = async () => {
     <p className="text-sm text-yellow-600 mt-2">{instance.ai_suggestion.reason}</p>
   </motion.div>
 )}
+
 
 {/* Timeline with Real Tasks */}
 <div>

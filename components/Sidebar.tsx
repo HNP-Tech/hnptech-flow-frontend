@@ -6,8 +6,11 @@ import { Home, Workflow, Users, FileText, BarChart3, Settings, Moon, Sun, Menu, 
 import { useState, useEffect } from 'react';
 
 const menuItems = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Quy Trình', href: '/workflow', icon: Workflow },
+  { name: 'Dashboard 1', href: '/', icon: Home },
+  { name: 'Dashboard 2', href: '/dashboard', icon: Home },
+  { name: 'Quy Trình 1', href: '/workflow', icon: Workflow },
+  { name: 'Quy Trình 2', href: '/workflows/new', icon: Workflow },
+  { name: 'Phê Duyệt', href: '/workflows/tasks', icon: Workflow },
   { name: 'Nhân Sự', href: '/hr', icon: Users },
   { name: 'Báo Cáo', href: '/reports', icon: BarChart3 },
   { name: 'Tài liệu', href: '/documents', icon: FileText },
