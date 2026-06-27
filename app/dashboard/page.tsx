@@ -5,6 +5,12 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
 
+interface ChartData {
+  name: string;
+  count: number;
+  fill: string;
+}
+
 export default function DashboardPage() {
   const [stats, setStats] = useState({
     totalWorkflows: 0,
@@ -13,16 +19,15 @@ export default function DashboardPage() {
     avgTime: 0,
   });
 
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
 
   useEffect(() => {
-    // Demo data - sau sẽ gọi API thật
     setStats({
       totalWorkflows: 48,
       completed: 35,
       pending: 8,
       avgTime: 2.4,
-    }as const);
+    });
 
     setChartData([
       { name: 'Nghỉ phép', count: 18, fill: COLORS[0] },
