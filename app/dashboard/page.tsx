@@ -22,7 +22,7 @@ export default function DashboardPage() {
       completed: 35,
       pending: 8,
       avgTime: 2.4,
-    });
+    }as const);
 
     setChartData([
       { name: 'Nghỉ phép', count: 18, fill: COLORS[0] },
