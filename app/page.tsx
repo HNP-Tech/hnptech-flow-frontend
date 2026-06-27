@@ -47,7 +47,7 @@ export default function Dashboard() {
         ].map((stat, index) => (
           <div 
             key={index}
-            className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm hover:scale-105 transition-transform duration-300"
+	    className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm hover:scale-105 transition-transform duration-300"
           >
             <stat.icon className={`w-12 h-12 text-${stat.color}-600 mb-4`} />
             <p className="text-gray-500 dark:text-gray-400">{stat.label}</p>
